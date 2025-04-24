@@ -16,15 +16,13 @@ import {
   DialogContent,
   DialogTitle,
   useTheme,
-  Alert,
-  // TextField
+  Alert
 } from '@mui/material';
 import { Close, NaturePeople } from '@mui/icons-material';
 import { useCart } from '../context/CartContext';
 import { useNavigate } from 'react-router-dom';
+import backend_uri from '../const';
 // import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
-// import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-// import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
 
 interface CheckoutPageProps {
   open: boolean;
@@ -74,7 +72,7 @@ const CheckoutPage: React.FC<CheckoutPageProps> = ({ open, onClose }) => {
 
       console.log('Sending order data:', orderData); // For debugging
 
-      const response = await fetch('https://picnichood.mandeeps.me/api/order', {
+      const response = await fetch(`${backend_uri}/api/order:`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

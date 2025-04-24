@@ -1,4 +1,4 @@
-const BASE_URL = 'https://picnichood.mandeeps.me/api';
+const BASE_URL = '${backend_uri}/api';
 
 interface ApiOptions {
   method?: 'GET' | 'POST' | 'PUT' | 'DELETE';

@@ -9,6 +9,7 @@ import {
   CircularProgress,
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
+import backend_uri from '../const';
 
 interface LoginResponse {
   token: string;
@@ -34,7 +35,7 @@ const LoginPage: React.FC = () => {
     setError(null);
 
     try {
-      const response = await fetch('https://picnichood.mandeeps.me/api/auth/login', {
+      const response = await fetch(`${backend_uri}/api/auth/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
