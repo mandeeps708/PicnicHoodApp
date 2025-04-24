@@ -127,6 +127,7 @@ const CommunityPage = () => {
     // Check if user is already in a community
     const checkUserCommunity = async () => {
       try {
+        console.log("hi");
         const token = localStorage.getItem('authToken');
         if (!token) {
           navigate('/login');
@@ -135,6 +136,7 @@ const CommunityPage = () => {
 
         const userData = JSON.parse(localStorage.getItem('userData') || '{}');
         const community_id = userData.community;
+        console.log("hi");
         console.log(userData);
         if (community_id) {
           console.log(community_id);
@@ -172,7 +174,7 @@ const CommunityPage = () => {
         return;
       }
 
-      const response = await fetch(`${backend_uri}/api/community/${communityId}/join`, {
+      const response = await fetch(`https://picnichood.mandeeps.me/api/community/${communityId}/join`, {
         method: 'POST',
         headers: {
           'Authorization': token,
@@ -190,7 +192,7 @@ const CommunityPage = () => {
       }
 
       // Refresh the communities list
-      const updatedResponse = await fetch(`${backend_uri}/api/community`, {
+      const updatedResponse = await fetch(`https://picnichood.mandeeps.me/api/community`, {
         headers: {
           'Authorization': token,
         },

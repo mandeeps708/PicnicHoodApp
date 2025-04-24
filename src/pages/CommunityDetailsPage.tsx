@@ -22,7 +22,7 @@ import {
 } from '@mui/material';
 import { ChatBubbleOutline, HowToVote, AccessTime } from '@mui/icons-material';
 import { useParams, useNavigate } from 'react-router-dom';
-import backend_uri from '../const';
+
 
 interface User {
   _id: string;
@@ -39,6 +39,7 @@ interface Community {
 }
 
 const CommunityDetailsPage = () => {
+  console.log('CommunityDetailsPage component initialized');
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const [community, setCommunity] = useState<Community | null>(null);
@@ -56,7 +57,8 @@ const CommunityDetailsPage = () => {
           return;
         }
 
-        const response = await fetch(`${backend_uri}/api/community/${id}`, {
+        console.log('Fetching community with ID:', id);
+        const response = await fetch(`https://picnichood.mandeeps.me/api/community/${id}`, {
           headers: {
             'Authorization': token,
           },
@@ -73,7 +75,19 @@ const CommunityDetailsPage = () => {
         }
 
         const data = await response.json();
-        setCommunity(data);
+        console.log('Received community data:', data);
+        
+        // Transform the data to match our interface
+        const communityData: Community = {
+          _id: data._id || id,
+          name: data.name || 'Unnamed Community',
+          description: data.description || 'No description available',
+          members: data.members || [],
+          imageUrl: data.imageUrl || undefined
+        };
+        
+        console.log('Transformed community data:', communityData);
+        setCommunity(communityData);
       } catch (err) {
         console.error('Community details error:', err);
         setError(err instanceof Error ? err.message : 'Failed to load community details');
@@ -85,6 +99,8 @@ const CommunityDetailsPage = () => {
     fetchCommunity();
   }, [id, navigate]);
 
+  console.log('Current state:', { loading, error, community });
+
   const handleVote = async () => {
     try {
       const token = localStorage.getItem('authToken');
@@ -93,7 +109,7 @@ const CommunityDetailsPage = () => {
         return;
       }
 
-      const response = await fetch(`${backend_uri}/api/community/${id}/vote`, {
+      const response = await fetch(`https://picnichood.mandeeps.me/api/community/${id}/vote`, {
         method: 'POST',
         headers: {
           'Authorization': token,
@@ -121,6 +137,7 @@ const CommunityDetailsPage = () => {
   };
 
   if (loading) {
+    console.log('Rendering loading state');
     return (
       <Box sx={{ display: 'flex', justifyContent: 'center', p: 4 }}>
         <CircularProgress />
@@ -129,6 +146,7 @@ const CommunityDetailsPage = () => {
   }
 
   if (error) {
+    console.log('Rendering error state:', error);
     return (
       <Box sx={{ p: 2 }}>
         <Alert severity="error">{error}</Alert>
@@ -137,12 +155,15 @@ const CommunityDetailsPage = () => {
   }
 
   if (!community) {
+    console.log('Rendering no community state');
     return (
       <Box sx={{ p: 2 }}>
         <Alert severity="warning">Community not found</Alert>
       </Box>
     );
   }
+
+  console.log('Rendering community content:', community);
 
   return (
     <Box sx={{ p: 2, maxWidth: 600, mx: 'auto' }}>

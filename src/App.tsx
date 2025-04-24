@@ -56,6 +56,14 @@ const App = () => {
               }
             />
             <Route
+              path="/community/:id"
+              element={
+                <ProtectedLayout>
+                  <CommunityDetailsPage />
+                </ProtectedLayout>
+              }
+            />
+            <Route
               path="/chat"
               element={
                 <ProtectedLayout>
