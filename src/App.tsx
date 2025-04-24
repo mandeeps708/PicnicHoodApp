@@ -12,6 +12,7 @@ import LoginPage from './pages/LoginPage';
 import {ProfilePage} from './pages/ProfilePage';
 import BottomNavigation from './components/BottomNavigation';
 import theme from './theme';
+import { CartProvider } from './context/CartContext';
 
 const ProtectedLayout = ({ children }: { children: React.ReactNode }) => {
   const token = localStorage.getItem('authToken');
@@ -32,51 +33,53 @@ const App = () => {
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
-      <BrowserRouter>
-        <Routes>
-          <Route path="/login" element={<LoginPage />} />
-          <Route
-            path="/"
-            element={
-              <ProtectedLayout>
-                <HomePage />
-              </ProtectedLayout>
-            }
-          />
-          <Route
-            path="/community"
-            element={
-              <ProtectedLayout>
-                <CommunityPage />
-              </ProtectedLayout>
-            }
-          />
-          <Route
-            path="/cook"
-            element={
-              <ProtectedLayout>
-                <CookPage />
-              </ProtectedLayout>
-            }
-          />
-          <Route
-            path="/cart"
-            element={
-              <ProtectedLayout>
-                <CartPage />
-              </ProtectedLayout>
-            }
-          />
-          <Route
-            path="/profile"
-            element={
-              <ProtectedLayout>
-                <ProfilePage />
-              </ProtectedLayout>
-            }
-          />
-        </Routes>
-      </BrowserRouter>
+      <CartProvider>
+        <BrowserRouter>
+          <Routes>
+            <Route path="/login" element={<LoginPage />} />
+            <Route
+              path="/"
+              element={
+                <ProtectedLayout>
+                  <HomePage />
+                </ProtectedLayout>
+              }
+            />
+            <Route
+              path="/community"
+              element={
+                <ProtectedLayout>
+                  <CommunityPage />
+                </ProtectedLayout>
+              }
+            />
+            <Route
+              path="/cook"
+              element={
+                <ProtectedLayout>
+                  <CookPage />
+                </ProtectedLayout>
+              }
+            />
+            <Route
+              path="/cart"
+              element={
+                <ProtectedLayout>
+                  <CartPage />
+                </ProtectedLayout>
+              }
+            />
+            <Route
+              path="/profile"
+              element={
+                <ProtectedLayout>
+                  <ProfilePage />
+                </ProtectedLayout>
+              }
+            />
+          </Routes>
+        </BrowserRouter>
+      </CartProvider>
     </ThemeProvider>
   );
 };
