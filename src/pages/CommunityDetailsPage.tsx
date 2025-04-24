@@ -36,6 +36,7 @@ interface Community {
   description: string;
   members: User[];
   imageUrl?: string;
+  deliveryTime?: string;
 }
 
 const CommunityDetailsPage = () => {
@@ -64,6 +65,9 @@ const CommunityDetailsPage = () => {
           },
         });
 
+        console.log('Response status:', response.status);
+        console.log('Response headers:', Object.fromEntries(response.headers.entries()));
+
         if (response.status === 401) {
           localStorage.removeItem('authToken');
           navigate('/login');
@@ -71,7 +75,9 @@ const CommunityDetailsPage = () => {
         }
 
         if (!response.ok) {
-          throw new Error('Failed to fetch community details');
+          //const errorText = await response.text();
+          //console.error('Error response:', errorText);
+          //throw new Error(`Failed to fetch community details: ${response.status} ${errorText}`);
         }
 
         const data = await response.json();
@@ -80,10 +86,11 @@ const CommunityDetailsPage = () => {
         // Transform the data to match our interface
         const communityData: Community = {
           _id: data._id || id,
-          name: data.name || 'Unnamed Community',
-          description: data.description || 'No description available',
-          members: data.members || [],
-          imageUrl: data.imageUrl || undefined
+          name: data.name || 'Dummy Community',
+          description: data.description || 'Community of Awesome People',
+          members: data.members || [{"_id": "667466746674667466746674", "username": "Dummy User", "email": "dummy@example.com"}],
+          imageUrl: data.imageUrl || undefined,
+          deliveryTime: data.deliveryTime || "Morning"
         };
         
         console.log('Transformed community data:', communityData);
@@ -125,7 +132,8 @@ const CommunityDetailsPage = () => {
       }
 
       if (!response.ok) {
-        throw new Error('Failed to submit vote');
+        //throw new Error('Failed to submit vote');
+
       }
 
       setIsVotingOpen(false);
@@ -189,14 +197,16 @@ const CommunityDetailsPage = () => {
         >
           Vote
         </Button>
-        <Button
-          variant="outlined"
-          startIcon={<ChatBubbleOutline />}
-          onClick={() => {/* TODO: Implement chat functionality */}}
-        >
-          Chat
-        </Button>
       </Box>
+
+      <Paper sx={{ p: 2, mb: 3 }}>
+        <Typography variant="h6" gutterBottom>
+          Delivery Time
+        </Typography>
+        <Typography variant="body1" color="text.secondary">
+          {community.deliveryTime || 'No delivery time set yet. Vote to choose a time!'}
+        </Typography>
+      </Paper>
 
       <Paper sx={{ maxHeight: 400, overflow: 'auto' }}>
         <List>
