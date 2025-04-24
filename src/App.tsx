@@ -6,6 +6,7 @@ import Box from '@mui/material/Box';
 
 import HomePage from './pages/HomePage';
 import CommunityPage from './pages/CommunityPage';
+import CommunityDetailsPage from './pages/CommunityDetailsPage';
 import CartPage from './pages/CartPage';
 // import CookPage from './pages/CookPage';
 import LoginPage from './pages/LoginPage';
