@@ -64,7 +64,6 @@ const CommunityPage = () => {
   const [error, setError] = useState<string | null>(null);
   const [userLocation, setUserLocation] = useState<Coordinates | null>(null);
   const [locationError, setLocationError] = useState<string | null>(null);
-  const [userCommunity, setUserCommunity] = useState<string | null>(null);
 
   useEffect(() => {
     if ('geolocation' in navigator) {

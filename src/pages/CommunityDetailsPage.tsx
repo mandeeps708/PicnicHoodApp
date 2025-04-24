@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   Box,
   Typography,
@@ -20,7 +20,7 @@ import {
   FormControlLabel,
   Stack,
 } from '@mui/material';
-import { ChatBubbleOutline, HowToVote, AccessTime } from '@mui/icons-material';
+import { HowToVote, AccessTime } from '@mui/icons-material';
 import { useParams, useNavigate } from 'react-router-dom';
 
 
