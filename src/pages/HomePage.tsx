@@ -15,6 +15,7 @@ import { useNavigate } from 'react-router-dom';
 import SearchBar from '../components/SearchBar';
 import { Add } from '@mui/icons-material';
 import { useCart } from '../context/CartContext';
+import backend_uri from '../const';
 
 interface Product {
   _id: string;
@@ -41,7 +42,7 @@ const HomePage = () => {
           return;
         }
 
-        const response = await fetch('https://picnichood.mandeeps.me/api/article', {
+        const response = await fetch(`${backend_uri}/api/article`, {
           headers: {
             'Authorization': token,
           },

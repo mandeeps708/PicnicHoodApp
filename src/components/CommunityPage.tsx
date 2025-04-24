@@ -11,7 +11,7 @@ import {
 } from '@mui/material';
 import { LocationOn, People } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
-
+import backend_uri from '../const';
 interface Location {
   type: string;
   coordinates: number[];
@@ -47,7 +47,7 @@ const CommunityPage = () => {
           return;
         }
 
-        const response = await fetch('https://picnichood.mandeeps.me/api/communities', {
+        const response = await fetch(`${backend_uri}/api/community`, {
           headers: {
             'Authorization': token,
           },

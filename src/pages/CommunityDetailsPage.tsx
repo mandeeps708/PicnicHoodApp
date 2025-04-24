@@ -11,9 +11,18 @@ import {
   CircularProgress,
   Alert,
   Paper,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  RadioGroup,
+  Radio,
+  FormControlLabel,
+  Stack,
 } from '@mui/material';
-import { ChatBubbleOutline, HowToVote } from '@mui/icons-material';
+import { ChatBubbleOutline, HowToVote, AccessTime } from '@mui/icons-material';
 import { useParams, useNavigate } from 'react-router-dom';
+import backend_uri from '../const';
 
 interface User {
   _id: string;
@@ -35,6 +44,8 @@ const CommunityDetailsPage = () => {
   const [community, setCommunity] = useState<Community | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [isVotingOpen, setIsVotingOpen] = useState(false);
+  const [selectedTimeSlot, setSelectedTimeSlot] = useState<string>('');
 
   useEffect(() => {
     const fetchCommunity = async () => {
@@ -45,7 +56,7 @@ const CommunityDetailsPage = () => {
           return;
         }
 
-        const response = await fetch(`https://picnichood.mandeeps.me/api/community/${id}`, {
+        const response = await fetch(`${backend_uri}/api/community/${id}`, {
           headers: {
             'Authorization': token,
           },
@@ -73,6 +84,41 @@ const CommunityDetailsPage = () => {
 
     fetchCommunity();
   }, [id, navigate]);
+
+  const handleVote = async () => {
+    try {
+      const token = localStorage.getItem('authToken');
+      if (!token) {
+        navigate('/login');
+        return;
+      }
+
+      const response = await fetch(`${backend_uri}/api/community/${id}/vote`, {
+        method: 'POST',
+        headers: {
+          'Authorization': token,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ timeSlot: selectedTimeSlot }),
+      });
+
+      if (response.status === 401) {
+        localStorage.removeItem('authToken');
+        navigate('/login');
+        return;
+      }
+
+      if (!response.ok) {
+        throw new Error('Failed to submit vote');
+      }
+
+      setIsVotingOpen(false);
+      setSelectedTimeSlot('');
+    } catch (err) {
+      console.error('Voting error:', err);
+      setError(err instanceof Error ? err.message : 'Failed to submit vote');
+    }
+  };
 
   if (loading) {
     return (
@@ -118,7 +164,7 @@ const CommunityDetailsPage = () => {
         <Button
           variant="contained"
           startIcon={<HowToVote />}
-          onClick={() => {/* TODO: Implement voting functionality */}}
+          onClick={() => setIsVotingOpen(true)}
         >
           Vote
         </Button>
@@ -146,6 +192,70 @@ const CommunityDetailsPage = () => {
           ))}
         </List>
       </Paper>
+
+      <Dialog 
+        open={isVotingOpen} 
+        onClose={() => setIsVotingOpen(false)}
+        maxWidth="sm"
+        fullWidth
+      >
+        <DialogTitle>
+          <Stack direction="row" spacing={1} alignItems="center">
+            <AccessTime color="primary" />
+            <Typography variant="h6">Choose Delivery Time</Typography>
+          </Stack>
+        </DialogTitle>
+        <DialogContent>
+          <Typography variant="body1" sx={{ mb: 2 }}>
+            Select your preferred delivery time slot. The most popular time will be chosen for the community delivery.
+          </Typography>
+          <RadioGroup
+            value={selectedTimeSlot}
+            onChange={(e) => setSelectedTimeSlot(e.target.value)}
+          >
+            <FormControlLabel
+              value="morning"
+              control={<Radio />}
+              label={
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                  <AccessTime fontSize="small" />
+                  <Typography>Morning (8:00 - 12:00)</Typography>
+                </Box>
+              }
+            />
+            <FormControlLabel
+              value="afternoon"
+              control={<Radio />}
+              label={
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                  <AccessTime fontSize="small" />
+                  <Typography>Afternoon (12:00 - 16:00)</Typography>
+                </Box>
+              }
+            />
+            <FormControlLabel
+              value="evening"
+              control={<Radio />}
+              label={
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                  <AccessTime fontSize="small" />
+                  <Typography>Evening (16:00 - 20:00)</Typography>
+                </Box>
+              }
+            />
+          </RadioGroup>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setIsVotingOpen(false)}>Cancel</Button>
+          <Button 
+            onClick={handleVote} 
+            variant="contained" 
+            disabled={!selectedTimeSlot}
+          >
+            Submit Vote
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Box>
   );
 };

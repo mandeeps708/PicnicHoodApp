@@ -13,6 +13,7 @@ import {
 } from '@mui/material';
 import { LocationOn, People, Add } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
+import backend_uri from '../const';
 
 function calculateDistance(
   lat1: number,
@@ -94,7 +95,7 @@ const CommunityPage = () => {
           return;
         }
 
-        const response = await fetch('https://picnichood.mandeeps.me/api/community', {
+        const response = await fetch(`${backend_uri}/api/community`, {
           headers: {
             'Authorization': token,
           },
@@ -133,7 +134,7 @@ const CommunityPage = () => {
           return;
         }
 
-        const response = await fetch('https://picnichood.mandeeps.me/api/user/community', {
+        const response = await fetch(`${backend_uri}/api/user/community`, {
           headers: {
             'Authorization': token,
           },
@@ -183,7 +184,7 @@ const CommunityPage = () => {
         return;
       }
 
-      const response = await fetch(`https://picnichood.mandeeps.me/api/community/${communityId}/join`, {
+      const response = await fetch(`${backend_uri}/api/community/${communityId}/join`, {
         method: 'POST',
         headers: {
           'Authorization': token,
@@ -201,7 +202,7 @@ const CommunityPage = () => {
       }
 
       // Refresh the communities list
-      const updatedResponse = await fetch('https://picnichood.mandeeps.me/api/community', {
+      const updatedResponse = await fetch(`${backend_uri}/api/community`, {
         headers: {
           'Authorization': token,
         },
