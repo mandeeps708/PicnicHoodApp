@@ -79,6 +79,7 @@ const OrdersDialog: React.FC<OrdersDialogProps> = ({ open, onClose }) => {
         const articleIds = new Set(
           ordersData.flatMap(order => order.items.map(item => item.article))
         );
+        console.log(articleIds);
 
         // Fetch all articles in one request
         const articlesResponse = await fetch('https://picnichood.mandeeps.me/api/article', {

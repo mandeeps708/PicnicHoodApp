@@ -17,14 +17,14 @@ import {
   DialogTitle,
   useTheme,
   Alert,
-  TextField
+  // TextField
 } from '@mui/material';
 import { Close, NaturePeople } from '@mui/icons-material';
 import { useCart } from '../context/CartContext';
 import { useNavigate } from 'react-router-dom';
 // import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
+// import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+// import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
 
 interface CheckoutPageProps {
   open: boolean;
@@ -36,7 +36,7 @@ const CheckoutPage: React.FC<CheckoutPageProps> = ({ open, onClose }) => {
   const navigate = useNavigate();
   const { items, getTotalPrice, clearCart } = useCart();
   const [isCommunityOrder, setIsCommunityOrder] = useState(true);
-  const [deliveryDate, setDeliveryDate] = useState<Date | null>(new Date());
+  const [deliveryDate, _] = useState<Date | null>(new Date());
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 

@@ -7,10 +7,10 @@ import {
   IconButton,
   List,
   ListItem,
-  ListItemText,
-  ListItemAvatar,
+  // ListItemText,
+  // ListItemAvatar,
   Avatar,
-  Divider,
+  // Divider,
   Container,
 } from '@mui/material';
 import { Send } from '@mui/icons-material';
@@ -145,7 +145,7 @@ const ChatPage: React.FC = () => {
       >
         <Container maxWidth="sm">
           <List>
-            {messages.map((message, index) => (
+            {messages.map((message, _) => (
               <React.Fragment key={message.id}>
                 <ListItem
                   sx={{
