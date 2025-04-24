@@ -8,18 +8,17 @@ import {
 import {
   Home,
   People,
-  Restaurant,
-  Search,
+  Chat,
   ShoppingCart,
   Person,
 } from '@mui/icons-material';
 
-const paths = ['/', '/community', '/cook', '/cart', '/profile'];
-const labels = ['Home', 'Community', 'Cook', 'Cart', 'Profile'];
+const paths = ['/', '/community', '/chat', '/cart', '/profile'];
+const labels = ['Home', 'Community', 'Chat', 'Cart', 'Profile'];
 const icons = [
   <Home />,
   <People />,
-  <Restaurant />,
+  <Chat />,
   <ShoppingCart />,
   <Person />,
 ];

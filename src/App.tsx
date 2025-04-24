@@ -14,6 +14,7 @@ import {ProfilePage} from './pages/ProfilePage';
 import BottomNavigation from './components/BottomNavigation';
 import theme from './theme';
 import { CartProvider } from './context/CartContext';
+import ChatPage from './pages/ChatPage';
 
 const ProtectedLayout = ({ children }: { children: React.ReactNode }) => {
   const token = localStorage.getItem('authToken');
@@ -55,18 +56,10 @@ const App = () => {
               }
             />
             <Route
-              path="/community/:id"
+              path="/chat"
               element={
                 <ProtectedLayout>
-                  <CommunityDetailsPage />
-                </ProtectedLayout>
-              }
-            />
-            <Route
-              path="/cook"
-              element={
-                <ProtectedLayout>
-                  <CookPage />
+                  <ChatPage />
                 </ProtectedLayout>
               }
             />
