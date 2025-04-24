@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Box,
   Avatar,
@@ -19,6 +19,7 @@ import {
   AdminPanelSettings,
 } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
+import OrdersDialog from '../components/OrdersDialog';
 
 interface UserData {
   id: string;
@@ -31,6 +32,37 @@ export const ProfilePage: React.FC = () => {
   const navigate = useNavigate();
   const userDataString = localStorage.getItem('userData');
   const userData: UserData | null = userDataString ? JSON.parse(userDataString) : null;
+  const [orderCount, setOrderCount] = useState(0);
+  const [isOrdersDialogOpen, setIsOrdersDialogOpen] = useState(false);
+
+  const fetchOrderCount = async () => {
+    try {
+      const token = localStorage.getItem('authToken');
+      if (!token) return;
+
+      const response = await fetch('https://picnichood.mandeeps.me/api/order', {
+        headers: {
+          'Authorization': token
+        }
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setOrderCount(data.length);
+      }
+    } catch (error) {
+      console.error('Failed to fetch order count:', error);
+    }
+  };
+
+  useEffect(() => {
+    fetchOrderCount();
+  }, []);
+
+  const handleOrdersDialogClose = () => {
+    setIsOrdersDialogOpen(false);
+    fetchOrderCount(); // Refresh the order count when dialog closes
+  };
 
   if (!userData) {
     navigate('/login');
@@ -106,9 +138,18 @@ export const ProfilePage: React.FC = () => {
 
         {/* Stats Section */}
         <Box sx={{ display: 'flex', justifyContent: 'space-around', mb: 3 }}>
-          <Box sx={{ textAlign: 'center' }}>
+          <Box 
+            sx={{ 
+              textAlign: 'center', 
+              cursor: 'pointer',
+              '&:hover': {
+                opacity: 0.8
+              }
+            }}
+            onClick={() => setIsOrdersDialogOpen(true)}
+          >
             <Typography variant="h4" color="primary" gutterBottom>
-              0
+              {orderCount}
             </Typography>
             <Typography variant="body2" color="text.secondary">Orders</Typography>
           </Box>
@@ -132,6 +173,11 @@ export const ProfilePage: React.FC = () => {
           Logout
         </Button>
       </Paper>
+
+      <OrdersDialog
+        open={isOrdersDialogOpen}
+        onClose={handleOrdersDialogClose}
+      />
     </Container>
   );
 };
