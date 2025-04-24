@@ -17,6 +17,7 @@ interface LoginResponse {
     username: string;
     email: string;
     role: string;
+    community: string;
   };
 }
 
@@ -53,7 +54,8 @@ const LoginPage: React.FC = () => {
         id: data.user.id,
         username: data.user.username,
         email: data.user.email,
-        role: data.user.role
+        role: data.user.role,
+        community: data.user.community
       }));
 
       navigate('/');

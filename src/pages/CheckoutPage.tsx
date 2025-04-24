@@ -66,7 +66,7 @@ const CheckoutPage: React.FC<CheckoutPageProps> = ({ open, onClose }) => {
           article: item.id,
           quantity: item.quantity
         })),
-        community: isCommunityOrder ? userData.communityId : undefined,
+        community: isCommunityOrder ? userData.community : undefined,
         deliveryDate: deliveryDate.toISOString(),
         status: "pending",
         totalAmount: getTotalPrice()
