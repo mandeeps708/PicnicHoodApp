@@ -89,11 +89,13 @@ const CheckoutPage: React.FC<CheckoutPageProps> = ({ open, onClose }) => {
       }
 
       // Order successful
-      clearCart(); // Clear the cart after successful order
+      clearCart();
       onClose();
-      navigate('/profile'); // Redirect to profile page
+      // Show success alert using window.alert for now
+      window.alert('Order placed successfully!');
+      navigate('/profile');
     } catch (err) {
-      console.error('Checkout error:', err); // For debugging
+      console.error('Checkout error:', err);
       setError(err instanceof Error ? err.message : 'Failed to place order');
     } finally {
       setIsSubmitting(false);
@@ -101,112 +103,114 @@ const CheckoutPage: React.FC<CheckoutPageProps> = ({ open, onClose }) => {
   };
 
   return (
-    <Dialog
-      open={open}
-      onClose={onClose}
-      fullScreen
-      PaperProps={{
-        sx: { bgcolor: theme.palette.background.default }
-      }}
-    >
-      <DialogTitle sx={{ p: 2, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-        <Typography variant="h6">Do you still need this?</Typography>
-        <IconButton edge="end" onClick={onClose}>
-          <Close />
-        </IconButton>
-      </DialogTitle>
-      
-      <DialogContent>
-        <Typography variant="subtitle2" color="text.secondary" sx={{ mb: 2 }}>
-          Just to make sure :)
-        </Typography>
+    <>
+      <Dialog
+        open={open}
+        onClose={onClose}
+        fullScreen
+        PaperProps={{
+          sx: { bgcolor: theme.palette.background.default }
+        }}
+      >
+        <DialogTitle sx={{ p: 2, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <Typography variant="h6">Do you still need this?</Typography>
+          <IconButton edge="end" onClick={onClose}>
+            <Close />
+          </IconButton>
+        </DialogTitle>
+        
+        <DialogContent>
+          <Typography variant="subtitle2" color="text.secondary" sx={{ mb: 2 }}>
+            Just to make sure :)
+          </Typography>
 
-        <Paper elevation={0} sx={{ mb: 3, p: 2 }}>
-          <FormControlLabel
-            control={
-              <Switch
-                checked={isCommunityOrder}
-                onChange={(e) => setIsCommunityOrder(e.target.checked)}
-                color="primary"
-              />
-            }
-            label={
-              <Box>
-                <Typography variant="subtitle1">Is this a community order?</Typography>
-                <Typography variant="body2" color="text.secondary" sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                  <NaturePeople color="primary" />
-                  You will save CO2 footprint by scheduling your delivery with a community
-                </Typography>
-              </Box>
-            }
-          />
-        </Paper>
-
-        <Paper elevation={0} sx={{ mb: 3, p: 2 }}>
-          <Typography variant="subtitle1" gutterBottom>Delivery Date</Typography>
-          {/* <LocalizationProvider dateAdapter={AdapterDateFns}>
-            <DateTimePicker
-              value={deliveryDate}
-              onChange={(newValue) => setDeliveryDate(newValue)}
-              sx={{ width: '100%' }}
+          <Paper elevation={0} sx={{ mb: 3, p: 2 }}>
+            <FormControlLabel
+              control={
+                <Switch
+                  checked={isCommunityOrder}
+                  onChange={(e) => setIsCommunityOrder(e.target.checked)}
+                  color="primary"
+                />
+              }
+              label={
+                <Box>
+                  <Typography variant="subtitle1">Is this a community order?</Typography>
+                  <Typography variant="body2" color="text.secondary" sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                    <NaturePeople color="primary" />
+                    You will save CO2 footprint by scheduling your delivery with a community
+                  </Typography>
+                </Box>
+              }
             />
-          </LocalizationProvider> */}
-        </Paper>
+          </Paper>
 
-        <List sx={{ mb: 2 }}>
-          {items.map((item) => (
-            <ListItem key={item.id}>
-              <ListItemAvatar>
-                <Avatar src={item.image} variant="rounded" />
-              </ListItemAvatar>
-              <ListItemText
-                primary={item.name}
-                secondary={`${item.quantity}x €${item.price.toFixed(2)}`}
+          <Paper elevation={0} sx={{ mb: 3, p: 2 }}>
+            <Typography variant="subtitle1" gutterBottom>Delivery Date</Typography>
+            {/* <LocalizationProvider dateAdapter={AdapterDateFns}>
+              <DateTimePicker
+                value={deliveryDate}
+                onChange={(newValue) => setDeliveryDate(newValue)}
+                sx={{ width: '100%' }}
               />
-              <Typography variant="subtitle1">
-                €{(item.price * item.quantity).toFixed(2)}
-              </Typography>
-            </ListItem>
-          ))}
-        </List>
+            </LocalizationProvider> */}
+          </Paper>
 
-        {error && (
-          <Alert severity="error" sx={{ mb: 2 }}>
-            {error}
-          </Alert>
-        )}
+          <List sx={{ mb: 2 }}>
+            {items.map((item) => (
+              <ListItem key={item.id}>
+                <ListItemAvatar>
+                  <Avatar src={item.image} variant="rounded" />
+                </ListItemAvatar>
+                <ListItemText
+                  primary={item.name}
+                  secondary={`${item.quantity}x €${item.price.toFixed(2)}`}
+                />
+                <Typography variant="subtitle1">
+                  €{(item.price * item.quantity).toFixed(2)}
+                </Typography>
+              </ListItem>
+            ))}
+          </List>
 
-        <Paper
-          elevation={0}
-          sx={{
-            position: 'fixed',
-            bottom: 0,
-            left: 0,
-            right: 0,
-            p: 2,
-            bgcolor: 'background.paper',
-            borderTop: 1,
-            borderColor: 'divider'
-          }}
-        >
-          <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2 }}>
-            <Typography variant="h6">Total</Typography>
-            <Typography variant="h6" color="primary">
-              €{getTotalPrice().toFixed(2)}
-            </Typography>
-          </Box>
-          <Button
-            variant="contained"
-            fullWidth
-            size="large"
-            onClick={handleCheckout}
-            disabled={isSubmitting}
+          {error && (
+            <Alert severity="error" sx={{ mb: 2 }}>
+              {error}
+            </Alert>
+          )}
+
+          <Paper
+            elevation={0}
+            sx={{
+              position: 'fixed',
+              bottom: 0,
+              left: 0,
+              right: 0,
+              p: 2,
+              bgcolor: 'background.paper',
+              borderTop: 1,
+              borderColor: 'divider'
+            }}
           >
-            {isSubmitting ? 'Processing...' : 'Proceed to Checkout'}
-          </Button>
-        </Paper>
-      </DialogContent>
-    </Dialog>
+            <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2 }}>
+              <Typography variant="h6">Total</Typography>
+              <Typography variant="h6" color="primary">
+                €{getTotalPrice().toFixed(2)}
+              </Typography>
+            </Box>
+            <Button
+              variant="contained"
+              fullWidth
+              size="large"
+              onClick={handleCheckout}
+              disabled={isSubmitting}
+            >
+              {isSubmitting ? 'Processing...' : 'Proceed to Checkout'}
+            </Button>
+          </Paper>
+        </DialogContent>
+      </Dialog>
+    </>
   );
 };
 

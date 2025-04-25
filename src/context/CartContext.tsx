@@ -1,4 +1,6 @@
 import { createContext, useContext, useState, ReactNode } from 'react';
+import { Snackbar } from '@mui/material';
+import { Alert } from '@mui/material';
 
 interface CartItem {
   id: string;
@@ -15,12 +17,15 @@ interface CartContextType {
   updateQuantity: (id: string, quantity: number) => void;
   getTotalPrice: () => number;
   clearCart: () => void;
+  showOrderSuccess: boolean;
+  setShowOrderSuccess: (show: boolean) => void;
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
 
 export function CartProvider({ children }: { children: ReactNode }) {
   const [items, setItems] = useState<CartItem[]>([]);
+  const [showOrderSuccess, setShowOrderSuccess] = useState(false);
 
   const addToCart = (item: Omit<CartItem, 'quantity'>) => {
     setItems(currentItems => {
@@ -61,9 +66,26 @@ export function CartProvider({ children }: { children: ReactNode }) {
       removeFromCart, 
       updateQuantity, 
       getTotalPrice,
-      clearCart
+      clearCart,
+      showOrderSuccess,
+      setShowOrderSuccess
     }}>
       {children}
+      <Snackbar
+        open={showOrderSuccess}
+        autoHideDuration={2000}
+        onClose={() => setShowOrderSuccess(false)}
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+      >
+        <Alert 
+          severity="success"
+          variant="filled"
+          elevation={6}
+          sx={{ width: '100%' }}
+        >
+          Order placed successfully!
+        </Alert>
+      </Snackbar>
     </CartContext.Provider>
   );
 }

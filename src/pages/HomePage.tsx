@@ -10,6 +10,8 @@ import {
   Chip,
   Stack,
   IconButton,
+  Snackbar,
+  Alert,
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import SearchBar from '../components/SearchBar';
@@ -31,6 +33,8 @@ const HomePage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const { addToCart } = useCart();
+  const [searchQuery, setSearchQuery] = useState('');
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -85,6 +89,15 @@ const HomePage = () => {
     );
   }
 
+  const filteredProducts = products.filter(product =>
+    product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    product.category.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  const handleSearch = (query: string) => {
+    setSearchQuery(query);
+  };
+
   const handleAddToCart = (product: Product) => {
     addToCart({
       id: product._id,
@@ -92,12 +105,13 @@ const HomePage = () => {
       price: product.price,
       image: product.imageUrl
     });
+    setSnackbarOpen(true);
   };
 
   return (
     <Box sx={{ p: 2 }}>
       <Box sx={{ mb: 2 }}>
-        <SearchBar />
+        <SearchBar onSearch={handleSearch} />
       </Box>
       
       <Stack direction="row" spacing={1} sx={{ mb: 2, overflowX: 'auto', pb: 1 }}>
@@ -112,7 +126,7 @@ const HomePage = () => {
       </Stack>
 
       <Grid container spacing={2}>
-        {products.map((product) => (
+        {filteredProducts.map((product) => (
           <Grid item xs={6} sm={4} md={3} key={product._id}>
             <Card sx={{ height: '100%', display: 'flex', flexDirection: 'column', position: 'relative' }}>
               <CardMedia
@@ -150,6 +164,21 @@ const HomePage = () => {
           </Grid>
         ))}
       </Grid>
+
+      <Snackbar
+        open={snackbarOpen}
+        autoHideDuration={2000}
+        onClose={() => setSnackbarOpen(false)}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+      >
+        <Alert 
+          onClose={() => setSnackbarOpen(false)} 
+          severity="success" 
+          sx={{ width: '100%' }}
+        >
+          Added to cart!
+        </Alert>
+      </Snackbar>
     </Box>
   );
 };

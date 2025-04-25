@@ -5,25 +5,32 @@ import {
   Paper,
 } from '@mui/material';
 import { Search, Clear } from '@mui/icons-material';
-import { useNavigate } from 'react-router-dom';
 
-export interface SearchBarProps {
+interface SearchBarProps {
+  onSearch: (query: string) => void;
   placeholder?: string;
 }
 
-const SearchBar: React.FC<SearchBarProps> = ({ placeholder = "Search products..." }) => {
+const SearchBar: React.FC<SearchBarProps> = ({ 
+  onSearch, 
+  placeholder = "Search products..." 
+}) => {
   const [searchValue, setSearchValue] = useState('');
-  const navigate = useNavigate();
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
-    if (searchValue.trim()) {
-      navigate(`/search?q=${encodeURIComponent(searchValue)}`);
-    }
+    onSearch(searchValue);
+  };
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setSearchValue(value);
+    onSearch(value); // Real-time search
   };
 
   const handleClear = () => {
     setSearchValue('');
+    onSearch('');
   };
 
   return (
@@ -47,7 +54,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ placeholder = "Search products...
         sx={{ ml: 1, flex: 1 }}
         placeholder={placeholder}
         value={searchValue}
-        onChange={(e) => setSearchValue(e.target.value)}
+        onChange={handleChange}
       />
       {searchValue && (
         <IconButton sx={{ p: '10px' }} onClick={handleClear}>

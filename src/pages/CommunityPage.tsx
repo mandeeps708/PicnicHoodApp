@@ -121,19 +121,20 @@ const CommunityPage = () => {
     fetchCommunities();
   }, [navigate]);
 
-  const nearbyCommunities = userLocation
+  const nearbyCommunities = userLocation && communities
     ? communities
+        .filter(community => community?.location?.coordinates)
         .map(community => ({
           ...community,
           distance: calculateDistance(
             userLocation.latitude,
             userLocation.longitude,
-            community.location.coordinates[1], // latitude
-            community.location.coordinates[0]  // longitude
+            community.location.coordinates[1] || 0,
+            community.location.coordinates[0] || 0
           )
         }))
-        .filter(community => community.distance <= 1) // Only communities within 1km
-        .sort((a, b) => a.distance - b.distance) // Sort by distance
+        .filter(community => community.distance <= 1)
+        .sort((a, b) => a.distance - b.distance)
     : [];
 
   if (loading) {
@@ -175,33 +176,33 @@ const CommunityPage = () => {
       ) : (
         <Grid container spacing={2}>
           {nearbyCommunities.map((community) => (
-            <Grid item xs={12} key={community._id}>
+            <Grid item xs={12} key={community?._id || 'unknown'}>
               <Card>
                 <CardContent>
                   <Stack direction="row" spacing={2} alignItems="center">
                     <Avatar
-                      src={community.imageUrl}
-                      alt={community.name}
+                      src={community?.imageUrl}
+                      alt={community?.name || 'Community'}
                       sx={{ width: 56, height: 56 }}
                     />
                     <Box sx={{ flex: 1 }}>
                       <Typography variant="h6" component="h2">
-                        {community.name}
+                        {community?.name || 'Unnamed Community'}
                       </Typography>
                       <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
-                        {community.description}
+                        {community?.description || 'No description available'}
                       </Typography>
                       <Stack direction="row" spacing={2}>
                         <Stack direction="row" spacing={0.5} alignItems="center">
                           <LocationOn fontSize="small" color="action" />
                           <Typography variant="body2" color="text.secondary">
-                            {`${(community.distance).toFixed(2)} km away`}
+                            {`${(community?.distance || 0).toFixed(2)} km away`}
                           </Typography>
                         </Stack>
                         <Stack direction="row" spacing={0.5} alignItems="center">
                           <People fontSize="small" color="action" />
                           <Typography variant="body2" color="text.secondary">
-                            {community.members.length} members
+                            {community?.members?.length || 0} members
                           </Typography>
                         </Stack>
                       </Stack>
