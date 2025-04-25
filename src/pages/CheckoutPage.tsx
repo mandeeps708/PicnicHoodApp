@@ -92,9 +92,7 @@ const CheckoutPage: React.FC<CheckoutPageProps> = ({ open, onClose }) => {
       clearCart();
       setShowOrderSuccess(true);
       onClose();
-      setTimeout(() => {
-        navigate('/profile');
-      }, 2000);
+      navigate('/profile');
     } catch (err) {
       console.error('Checkout error:', err);
       setError(err instanceof Error ? err.message : 'Failed to place order');

@@ -35,6 +35,7 @@ const HomePage = () => {
   const { addToCart } = useCart();
   const [searchQuery, setSearchQuery] = useState('');
   const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState('All');
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -89,10 +90,15 @@ const HomePage = () => {
     );
   }
 
-  const filteredProducts = products.filter(product =>
-    product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    product.category.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const filteredProducts = products.filter(product => {
+    const matchesSearch = product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      product.category.toLowerCase().includes(searchQuery.toLowerCase());
+    
+    const matchesCategory = selectedCategory === 'All' || 
+      product.category.toLowerCase() === selectedCategory.toLowerCase();
+
+    return matchesSearch && matchesCategory;
+  });
 
   const handleSearch = (query: string) => {
     setSearchQuery(query);
@@ -108,61 +114,164 @@ const HomePage = () => {
     setSnackbarOpen(true);
   };
 
+  const handleCategoryClick = (category: string) => {
+    setSelectedCategory(category);
+  };
+
   return (
-    <Box sx={{ p: 2 }}>
-      <Box sx={{ mb: 2 }}>
+    <Box sx={{ 
+      p: { xs: 2, sm: 3 },
+      maxWidth: '1200px',
+      mx: 'auto',
+    }}>
+      <Box sx={{ mb: 3 }}>
         <SearchBar onSearch={handleSearch} />
       </Box>
       
-      <Stack direction="row" spacing={1} sx={{ mb: 2, overflowX: 'auto', pb: 1 }}>
-        {['All', 'Vegetables', 'Fruits', 'Dairy', 'Meat'].map((category) => (
-          <Chip
-            key={category}
-            label={category}
-            clickable
-            color={category === 'All' ? 'primary' : 'default'}
-          />
-        ))}
-      </Stack>
+      <Box sx={{ mb: 3 }}>
+        <Stack 
+          direction="row" 
+          spacing={1} 
+          sx={{ 
+            overflowX: 'auto',
+            pb: 1,
+            '&::-webkit-scrollbar': { height: 6 },
+            '&::-webkit-scrollbar-track': { bgcolor: 'grey.100' },
+            '&::-webkit-scrollbar-thumb': { bgcolor: 'grey.300', borderRadius: 3 },
+          }}
+        >
+          {['All', 'Vegetables', 'Fruits', 'Dairy', 'Meat'].map((category) => (
+            <Chip
+              key={category}
+              label={category}
+              clickable
+              onClick={() => handleCategoryClick(category)}
+              color={category === selectedCategory ? 'primary' : 'default'}
+              sx={{
+                px: 2,
+                minWidth: 'fit-content',
+                '&:hover': {
+                  bgcolor: category === selectedCategory ? 'primary.main' : 'primary.light',
+                  color: 'white',
+                },
+                ...(category === selectedCategory && {
+                  '& .MuiChip-label': {
+                    color: 'white',
+                  }
+                })
+              }}
+            />
+          ))}
+        </Stack>
+      </Box>
 
-      <Grid container spacing={2}>
-        {filteredProducts.map((product) => (
-          <Grid item xs={6} sm={4} md={3} key={product._id}>
-            <Card sx={{ height: '100%', display: 'flex', flexDirection: 'column', position: 'relative' }}>
-              <CardMedia
-                component="img"
-                height="140"
-                image={product.imageUrl}
-                alt={product.name}
-                sx={{ objectFit: 'cover' }}
-              />
-              <IconButton
-                onClick={() => handleAddToCart(product)}
-                sx={{
-                  position: 'absolute',
-                  right: 8,
-                  top: 8,
-                  backgroundColor: 'white',
-                  boxShadow: 1,
-                  '&:hover': {
-                    backgroundColor: 'white',
-                  },
-                }}
-                size="small"
-              >
-                <Add />
-              </IconButton>
-              <CardContent sx={{ flexGrow: 1, p: 1.5 }}>
-                <Typography variant="subtitle2" component="h3" noWrap>
-                  {product.name}
-                </Typography>
-                <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
-                  €{product.price.toFixed(2)}
-                </Typography>
-              </CardContent>
-            </Card>
-          </Grid>
-        ))}
+      <Box sx={{ mb: 2 }}>
+        <Typography variant="body2" color="text.secondary">
+          {filteredProducts.length} {filteredProducts.length === 1 ? 'item' : 'items'} found
+          {selectedCategory !== 'All' && ` in ${selectedCategory}`}
+          {searchQuery && ` matching "${searchQuery}"`}
+        </Typography>
+      </Box>
+
+      <Grid 
+        container 
+        spacing={2}
+        justifyContent="center"
+      >
+        {filteredProducts.length > 0 ? (
+          filteredProducts.map((product) => (
+            <Grid 
+              item 
+              xs={6} 
+              sm={4} 
+              md={3}
+              key={product._id}
+              sx={{
+                maxWidth: { xs: '50%', sm: '33.33%', md: '25%' },
+                minWidth: { xs: 150, sm: 200, md: 220 },
+              }}
+            >
+              <Card sx={{ 
+                height: '100%', 
+                display: 'flex', 
+                flexDirection: 'column', 
+                position: 'relative',
+                transition: 'transform 0.2s, box-shadow 0.2s',
+                '&:hover': {
+                  transform: 'translateY(-4px)',
+                  boxShadow: 3,
+                },
+              }}>
+                <Box sx={{ position: 'relative', pt: '75%' }}>
+                  <CardMedia
+                    component="img"
+                    image={product.imageUrl}
+                    alt={product.name}
+                    sx={{ 
+                      position: 'absolute',
+                      top: 0,
+                      left: 0,
+                      width: '100%',
+                      height: '100%',
+                      objectFit: 'cover',
+                    }}
+                  />
+                  <IconButton
+                    onClick={() => handleAddToCart(product)}
+                    sx={{
+                      position: 'absolute',
+                      right: 8,
+                      top: 8,
+                      backgroundColor: 'white',
+                      boxShadow: 1,
+                      '&:hover': {
+                        backgroundColor: 'white',
+                        transform: 'scale(1.1)',
+                      },
+                    }}
+                    size="small"
+                  >
+                    <Add />
+                  </IconButton>
+                </Box>
+                <CardContent sx={{ 
+                  flexGrow: 1,
+                  p: { xs: 1.5, sm: 2 },
+                }}>
+                  <Typography 
+                    variant="subtitle1" 
+                    component="h3" 
+                    sx={{ 
+                      fontWeight: 500,
+                      mb: 1,
+                      fontSize: { xs: '0.875rem', sm: '1rem' },
+                    }}
+                  >
+                    {product.name}
+                  </Typography>
+                  <Typography 
+                    variant="body1" 
+                    sx={{ 
+                      fontWeight: 600,
+                      color: 'primary.main',
+                    }}
+                  >
+                    €{product.price.toFixed(2)}
+                  </Typography>
+                </CardContent>
+              </Card>
+            </Grid>
+          ))
+        ) : (
+          <Box sx={{ py: 4, textAlign: 'center' }}>
+            <Typography variant="h6" color="text.secondary">
+              No products found
+            </Typography>
+            <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
+              Try adjusting your search or filter criteria
+            </Typography>
+          </Box>
+        )}
       </Grid>
 
       <Snackbar
