@@ -34,7 +34,7 @@ interface CheckoutPageProps {
 const CheckoutPage: React.FC<CheckoutPageProps> = ({ open, onClose }) => {
   const theme = useTheme();
   const navigate = useNavigate();
-  const { items, getTotalPrice, clearCart } = useCart();
+  const { items, getTotalPrice, clearCart, setShowOrderSuccess } = useCart();
   const [isCommunityOrder, setIsCommunityOrder] = useState(true);
   const [deliveryDate, _] = useState<Date | null>(new Date());
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -90,10 +90,11 @@ const CheckoutPage: React.FC<CheckoutPageProps> = ({ open, onClose }) => {
 
       // Order successful
       clearCart();
+      setShowOrderSuccess(true);
       onClose();
-      // Show success alert using window.alert for now
-      window.alert('Order placed successfully!');
-      navigate('/profile');
+      setTimeout(() => {
+        navigate('/profile');
+      }, 2000);
     } catch (err) {
       console.error('Checkout error:', err);
       setError(err instanceof Error ? err.message : 'Failed to place order');

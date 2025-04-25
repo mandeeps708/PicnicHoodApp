@@ -80,7 +80,6 @@ export function CartProvider({ children }: { children: ReactNode }) {
         <Alert 
           severity="success"
           variant="filled"
-          elevation={6}
           sx={{ width: '100%' }}
         >
           Order placed successfully!
